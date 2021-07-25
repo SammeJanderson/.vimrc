@@ -17,6 +17,8 @@ set relativenumber
 set colorcolumn=80
 highlight ColorColumn ctermbg=0 guibg=lightgrey
 
+"auto start nedtree"
+autocmd VimEnter * NERDTree
   
 call plug#begin('~/.vim/plugged')
 Plug 'morhetz/gruvbox'
@@ -26,6 +28,7 @@ Plug 'leafgarland/typescript-vim'
 Plug 'vim-utils/vim-man'
 Plug 'mbbill/undotree'
 Plug 'ctrlpvim/ctrlp.vim'
+Plug 'preservim/nerdtree'
 call plug#end()
 
 
@@ -45,6 +48,15 @@ let g:netrw_banner=0
 let g:netrw_winsize=25
 
 let g:ctrlp_use_caching = 0
+
+
+"CUSTOM KEYMAPPINGS"
+
+"NERDTREE"
+nnoremap <leader>n :NERDTreeFocus<CR>
+nnoremap <C-n> :NERDTree<CR>
+nnoremap <C-t> :NERDTreeToggle<CR>
+nnoremap <C-f> :NERDTreeFind<CR>
 
 nnoremap <leader>h :wincmd h<CR>
 nnoremap <leader>j :wincmd j<CR>
