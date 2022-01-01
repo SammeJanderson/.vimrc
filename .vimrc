@@ -39,17 +39,13 @@ call plug#end()
 colorscheme gruvbox
 set background=dark
 
+" some keybindings don't work otherwise
+autocmd VimEnter * NERDTree | wincmd p
 
 if executable('rg')
     let g:rg_derive_root='true'
 endif
 
-"open terminal 'this is gross and i am on a fever from covid so fuckit'
-nnoremap <leader>t :term<CR><C-w>J<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-
-"update 
-nnoremap <leader><F5> :source %<CR>
-"close all buffers
-nnoremap <leader><F4> :qa!<CR>
 
 
 let g:ctrlp_use_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-stardant']
@@ -240,21 +236,28 @@ set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " Mappings for CoCList
 " Show all diagnostics.
-nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
+nnoremap <silent><nowait> <leader><C-a>  :<C-u>CocList diagnostics<cr>
 " Manage extensions.
-nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
+nnoremap <silent><nowait> <leader><C-e>  :<C-u>CocList extensions<cr>
 " Show commands.
-nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
+nnoremap <silent><nowait> <leader><C-c>  :<C-u>CocList commands<cr>
 " Find symbol of current document.
-nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
+nnoremap <silent><nowait>  <leader><C-o> :<C-u>CocList outline<cr>
 " Search workspace symbols.
-nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
+nnoremap <silent><nowait>  <leader><C-s> :<C-u>CocList -I symbols<cr>
 " Do default action for next item.
-nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
+nnoremap <silent><nowait>  <leader><C-j> :<C-u>CocNext<CR>
 " Do default action for previous item.
-nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+nnoremap <silent><nowait>  <leader><C-k> :<C-u>CocPrev<CR>
 " Resume latest coc list.
-nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+nnoremap <silent><nowait>  <leader><C-p> :<C-u>CocListResume<CR>
+
+"open terminal 'this is gross and i am on a fever from covid so fuckit'
+nnoremap <leader>t :term<CR><C-w>J<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-
+"update 
+nnoremap <leader>[ :source %<CR>
+"close all buffers
+nnoremap <leader>\ :qa!<CR>
 
 
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
