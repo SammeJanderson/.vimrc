@@ -6,6 +6,7 @@ set tabstop=4 softtabstop=4
 set shiftwidth=4
 set expandtab
 set smartindent
+set ai
 set nu
 set nowrap
 set smartcase
@@ -15,11 +16,14 @@ set undodir=~/.vim/undodir
 set undofile
 set incsearch
 set relativenumber
+set showcmd
 set colorcolumn=80
-highlight ColorColumn ctermbg=0 guibg=lightgrey
 
+highlight ColorColumn ctermbg=0 guibg=lightgrey
   
 call plug#begin('~/.vim/plugged')
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'morhetz/gruvbox'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'tpope/vim-fugitive'
@@ -27,6 +31,7 @@ Plug 'leafgarland/typescript-vim'
 Plug 'vim-utils/vim-man'
 Plug 'mbbill/undotree'
 Plug 'ctrlpvim/ctrlp.vim'
+Plug 'ryanoasis/vim-devicons'
 Plug 'preservim/nerdtree'
 call plug#end()
 
@@ -38,6 +43,13 @@ set background=dark
 if executable('rg')
     let g:rg_derive_root='true'
 endif
+
+"open terminal 'this is gross and i am on a fever from covid so fuckit'
+nnoremap <leader>t :term<CR><C-w>J<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-
+"update 
+nnoremap <leader><F5> :source %<CR>
+"close all buffers
+nnoremap <leader><F4> :qa!<CR>
 
 
 let g:ctrlp_use_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-stardant']
@@ -59,18 +71,21 @@ nnoremap <C-n> :NERDTree<CR>
 nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-f> :NERDTreeFind<CR>
 
+"Win navigation 
+"On WLS this can be buggy, use CW instead
 nnoremap <leader>h :wincmd h<CR>
 nnoremap <leader>j :wincmd j<CR>
 nnoremap <leader>k :wincmd k<CR>
 nnoremap <leader>l :wincmd l<CR>
+
 nnoremap <leader>u :UndotreeShow<CR>
 nnoremap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>
 nnoremap <Leader>ps :Rg<SPACE>
 nnoremap <silent> <Leader>+ :vertical resize +5<CR>
 nnoremap <silent> <Leader>- :vertical resize -5<CR>
 
-"nnoremap <silent> <Leader>gd :YcmCompleter GoTo<CR>
-"nnoremap <silent> <Leader>gf :YcmCompleter FixIt<CR>
+let g:NERDTreeWinPos = "right"
+autocmd VimEnter * NERDTree | wincmd p
 
 
 
@@ -240,5 +255,6 @@ nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+
 
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
