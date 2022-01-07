@@ -18,11 +18,18 @@ set incsearch
 set relativenumber
 set showcmd
 set colorcolumn=80
+set autoread
+set path+=**
 
 highlight ColorColumn ctermbg=0 guibg=lightgrey
   
 call plug#begin('~/.vim/plugged')
+Plug 'puremourning/vimspector'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'savq/melange'
 Plug 'vim-airline/vim-airline'
+Plug '907th/vim-auto-save'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'morhetz/gruvbox'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -32,27 +39,38 @@ Plug 'vim-utils/vim-man'
 Plug 'mbbill/undotree'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'ryanoasis/vim-devicons'
+Plug 'zivyangll/git-blame.vim'
 Plug 'preservim/nerdtree'
 call plug#end()
-
 
 colorscheme gruvbox
 set background=dark
 
-" some keybindings don't work otherwise
 autocmd VimEnter * NERDTree | wincmd p
 
 if executable('rg')
     let g:rg_derive_root='true'
 endif
 
+" Returns true if the color hex value is light
+function! IsHexColorLight(color) abort
+  let l:raw_color = trim(a:color, '#')
 
+  let l:red = str2nr(substitute(l:raw_color, '(.{2}).{4}', '1', 'g'), 16)
+  let l:green = str2nr(substitute(l:raw_color, '.{2}(.{2}).{2}', '1', 'g'), 16)
+  let l:blue = str2nr(substitute(l:raw_color, '.{4}(.{2})', '1', 'g'), 16)
+
+  let l:brightness = ((l:red * 299) + (l:green * 587) + (l:blue * 114)) / 1000
+
+  return l:brightness > 155
+endfunction
 
 let g:ctrlp_use_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-stardant']
 let mapleader = " "
 let g:netrw_browse_split=2
 let g:netrw_banner=0
 let g:netrw_winsize=25
+let g:auto_save = 1
 
 let g:ctrlp_use_caching = 0
 
@@ -184,6 +202,7 @@ nmap <leader>rn <Plug>(coc-rename)
 " Formatting selected code.
 xmap <leader>fo  <Plug>(coc-format-selected)
 nmap <leader>fo  <Plug>(coc-format-selected)
+nmap <leader>ff  :GFiles<CR>
 
 augroup mygroup
   autocmd!
@@ -252,12 +271,60 @@ nnoremap <silent><nowait>  <leader><C-k> :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait>  <leader><C-p> :<C-u>CocListResume<CR>
 
-"open terminal 'this is gross and i am on a fever from covid so fuckit'
-nnoremap <leader>t :term<CR><C-w>J<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-<C-w>-
 "update 
-nnoremap <leader>[ :source %<CR>
+nnoremap <leader>[ :source ~/.vimrc<CR>:source %<CR>
 "close all buffers
-nnoremap <leader>\ :qa!<CR>
+nnoremap <leader>] :qa!<CR>
 
+"limit number of terminals to 3
+let g:tbf= {1:-1, 2:-1, 3:-1}
+function GetFreeTermBuffer()
+    for i in [1,2,3]
+        if g:tbf[i] == -1
+            return i
+        endif
+    endfor
+    return -1
+endfunction
+
+function FillBuffer(i)
+    let g:tbf[a:i] = bufnr('')
+endfunction
+
+function OpenTerminal()
+    let abf = GetFreeTermBuffer()
+    if abf == -1
+        echo "max number of terminals already open"
+        return
+    endif
+    wincmd j
+    if &bt == "" 
+        vs
+        wincmd J 
+        res 10
+        call term_start($SHELL, {'curwin' : 1})
+        call FillBuffer(abf)
+    elseif &bt == "terminal" && abf == 2
+       vsp 
+       wincmd l
+       call term_start($SHELL, {'curwin' : 1})
+       call FillBuffer(abf)
+    elseif &bt == "terminal" && abf == 3
+       vsp 
+       wincmd l
+       wincmd l
+       call term_start($SHELL, {'curwin' : 1})
+       call FillBuffer(abf)
+    endif
+endfunction
+
+function ToogleTerminal()
+
+endfunction
+
+nnoremap <leader>t :call OpenTerminal()<CR>
+nnoremap <leader>w :call ToogleTerminal()<CR>
+"inline blame 
+nnoremap <leader>b :<C-u>call gitblame#echo()<CR>
 
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
